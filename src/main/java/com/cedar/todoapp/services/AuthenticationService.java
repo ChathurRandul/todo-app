@@ -6,6 +6,7 @@ import com.cedar.todoapp.exceptions.UserNotFoundException;
 import com.cedar.todoapp.exceptions.UsernameAlreadyExistsException;
 import com.cedar.todoapp.models.User;
 import com.cedar.todoapp.repositories.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +23,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public Integer register(RegisterUserRequest input) {
+    public Integer register(@Valid RegisterUserRequest input) {
         if (userRepository.findByEmail(input.email()).isPresent()) {
             log.warn("Attempt to register with existing email: {}", input.email());
             throw new UsernameAlreadyExistsException("Username already exists: " + input.email());
@@ -39,7 +40,7 @@ public class AuthenticationService {
         return createdUser.getId();
     }
 
-    public User authenticate(LoginUserRequest input) {
+    public User authenticate(@Valid LoginUserRequest input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.email(),
